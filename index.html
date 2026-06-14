@@ -861,17 +861,17 @@
       var lg=function(v){ return Math.log10(Math.max(1,v)); };
       var maxL=lg(imp)||1;
       var wf=function(v){ return (14+86*(lg(v)/maxL)).toFixed(1)+'%'; };
-      var min=Math.min(ctr,cr1,cr2,buy);
+      // пороги «слабого звена» по этапу: CTR<3, CR в корзину<15, CR в заказ<20; % выкупа не подсвечиваем
       var blue1='linear-gradient(90deg,#3a6fff,#6f9bff)', sh1='0 0 22px rgba(91,140,255,.4)';
       var html =
         bar('Показы', fmt(imp), wf(imp), blue1, '#fff', sh1, 'показы', '#cdd4e3', '#eef1f8', 600, 700)+
-        kicker('CTR · показ → клик', ctr.toFixed(1)+'%', ctr===min)+
+        kicker('CTR · показ → клик', ctr.toFixed(1)+'%', ctr<3)+
         bar('Клики', fmt(click), wf(click), blue1, '#fff', sh1, 'клики', '#cdd4e3', '#eef1f8', 600, 700)+
-        kicker('CR в корзину', cr1+'%', cr1===min)+
+        kicker('CR в корзину', cr1+'%', cr1<15)+
         bar('В корзину', fmt(cart), wf(cart), 'linear-gradient(90deg,#4a7bf0,#7aa2ff)', '#fff', '0 0 22px rgba(91,140,255,.35)', 'корзина', '#cdd4e3', '#eef1f8', 600, 700)+
-        kicker('CR в заказ', cr2+'%', cr2===min)+
+        kicker('CR в заказ', cr2+'%', cr2<20)+
         bar('Заказы', fmt(ord), wf(ord), 'linear-gradient(90deg,#5a86e8,#8fb0ff)', '#fff', '0 0 22px rgba(91,140,255,.3)', 'заказ', '#cdd4e3', '#eef1f8', 600, 700)+
-        kicker('% выкупа', buy+'%', buy===min)+
+        kicker('% выкупа', buy+'%', false)+
         bar('Выкупы · деньги', fmt(bu), wf(bu), 'linear-gradient(90deg,#1f9d57,#57e08f)', '#06120b', '0 0 24px rgba(87,224,143,.45)', 'выкуп', '#7ee0a8', '#7ee0a8', 700, 800)+
         '<div style="background:linear-gradient(135deg,#0a1f18,#06243f);border:1px solid rgba(87,224,143,.25);border-radius:14px;padding:16px 18px;margin-top:16px">'+
           '<span style="font-size:14px;color:#cdd4e3">Итоговая конверсия показ→выкуп: </span>'+
