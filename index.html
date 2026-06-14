@@ -248,6 +248,8 @@
     </div>
     <div id="funnelOut"></div>
   </div>
+  <div id="funnelResult" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:18px"></div>
+  <div id="funnelNote"></div>
 </div></section>
 
 <!-- Рычаги band -->
@@ -833,7 +835,7 @@
   // ============ КАЛЬКУЛЯТОР ВОРОНКИ ============
   (function(){
     var i_imp=$('i_imp'), i_ctr=$('i_ctr'), i_cr1=$('i_cr1'), i_cr2=$('i_cr2'), i_buy=$('i_buy');
-    var out=$('funnelOut');
+    var out=$('funnelOut'), fres=$('funnelResult'), fnote=$('funnelNote');
     function bar(label, value, width, grad, ink, shadow, txt, labelColor, valColor, valWeight, txtWeight){
       return '<div style="margin-bottom:4px">'+
         '<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px">'+
@@ -863,7 +865,7 @@
       var wf=function(v){ return (14+86*(lg(v)/maxL)).toFixed(1)+'%'; };
       // пороги «слабого звена» по этапу: CTR<3, CR в корзину<15, CR в заказ<20; % выкупа не подсвечиваем
       var blue1='linear-gradient(90deg,#3a6fff,#6f9bff)', sh1='0 0 22px rgba(91,140,255,.4)';
-      var html =
+      out.innerHTML =
         bar('Показы', fmt(imp), wf(imp), blue1, '#fff', sh1, 'показы', '#cdd4e3', '#eef1f8', 600, 700)+
         kicker('CTR · показ → клик', ctr.toFixed(1)+'%', ctr<3)+
         bar('Клики', fmt(click), wf(click), blue1, '#fff', sh1, 'клики', '#cdd4e3', '#eef1f8', 600, 700)+
@@ -872,18 +874,20 @@
         kicker('CR в заказ', cr2+'%', cr2<20)+
         bar('Заказы', fmt(ord), wf(ord), 'linear-gradient(90deg,#5a86e8,#8fb0ff)', '#fff', '0 0 22px rgba(91,140,255,.3)', 'заказ', '#cdd4e3', '#eef1f8', 600, 700)+
         kicker('% выкупа', buy+'%', false)+
-        bar('Количество выкупов', fmt(bu), wf(bu), 'linear-gradient(90deg,#1f9d57,#57e08f)', '#06120b', '0 0 24px rgba(87,224,143,.45)', 'выкуп', '#7ee0a8', '#7ee0a8', 700, 800)+
-        '<div style="background:linear-gradient(135deg,#0a1f18,#06243f);border:1px solid rgba(87,224,143,.25);border-radius:14px;padding:16px 18px;margin-top:16px">'+
-          '<span style="font-size:14px;color:#cdd4e3">Итоговая конверсия показ→выкуп: </span>'+
-          '<b style="font-size:26px;color:#7ee0a8;font-family:\'JetBrains Mono\',monospace;font-weight:700">'+(ctr/100*cr1/100*cr2/100*buy/100*100).toFixed(3)+'%</b>'+
-          '<div style="font-size:12.5px;color:#8fa3b8;margin-top:6px;line-height:1.5">Это произведение всех конверсий. Подними самое слабое звено — итог вырастет сильнее всего.</div>'+
+        bar('Количество выкупов', fmt(bu), wf(bu), 'linear-gradient(90deg,#1f9d57,#57e08f)', '#06120b', '0 0 24px rgba(87,224,143,.45)', 'выкуп', '#7ee0a8', '#7ee0a8', 700, 800);
+      fres.innerHTML =
+        '<div style="background:linear-gradient(135deg,#10241a,#0a2b1e);border:1px solid rgba(87,224,143,.35);border-radius:14px;padding:18px 20px">'+
+          '<div style="font-size:13.5px;color:#cdd4e3;margin-bottom:6px">Заработано · цена 1000 ₽, маржа 20% (200 ₽ с выкупа)</div>'+
+          '<b style="font-size:clamp(30px,4.4vw,38px);color:#7ee0a8;font-family:\'JetBrains Mono\',monospace;font-weight:800">'+fmt(bu*200)+' ₽</b>'+
         '</div>'+
-        '<div style="background:linear-gradient(135deg,#10241a,#0a2b1e);border:1px solid rgba(87,224,143,.35);border-radius:14px;padding:16px 18px;margin-top:12px">'+
-          '<span style="font-size:14px;color:#cdd4e3">Заработано (цена 1000 ₽, маржа 20% → 200 ₽ с выкупа): </span>'+
-          '<b style="font-size:32px;color:#7ee0a8;font-family:\'JetBrains Mono\',monospace;font-weight:800">'+fmt(bu*200)+' ₽</b>'+
-          '<div style="font-size:12.5px;color:#8fa3b8;margin-top:6px;line-height:1.5">Юнит-экономика здесь <b style="color:#cdd4e3">не меняется</b>: себестоимость, комиссия, логистика, налог те же — с каждого выкупа стабильные 200 ₽. Ты крутишь только конверсии воронки, а прибыль растёт. Вот что значит «работать с воронкой»: цена за товар прежняя, но больше выкупов = больше денег.</div>'+
+        '<div style="background:linear-gradient(135deg,#0a1f18,#06243f);border:1px solid rgba(87,224,143,.25);border-radius:14px;padding:18px 20px">'+
+          '<div style="font-size:13.5px;color:#cdd4e3;margin-bottom:6px">Итоговая конверсия показ → выкуп</div>'+
+          '<b style="font-size:clamp(30px,4.4vw,38px);color:#7ee0a8;font-family:\'JetBrains Mono\',monospace;font-weight:700">'+(ctr/100*cr1/100*cr2/100*buy/100*100).toFixed(3)+'%</b>'+
         '</div>';
-      out.innerHTML=html;
+      fnote.innerHTML =
+        '<div style="background:linear-gradient(135deg,#10241a,#0a2b1e);border:1px solid rgba(87,224,143,.22);border-radius:14px;padding:16px 20px;margin-top:14px;font-size:15px;line-height:1.65;color:#c4ccdb">'+
+          'Юнит-экономика здесь <b style="color:#eef1f8">не меняется</b>: себестоимость, комиссия, логистика, налог те же — с каждого выкупа стабильные 200 ₽. Ты крутишь только конверсии воронки, а прибыль растёт. Вот что значит «работать с воронкой»: цена за товар прежняя, но больше выкупов = больше денег. <b style="color:#cdd4e3">Итог = произведение всех конверсий; подними самое слабое звено — он вырастет сильнее всего.</b>'+
+        '</div>';
     }
     [i_imp,i_ctr,i_cr1,i_cr2,i_buy].forEach(function(el){ el.addEventListener('input', recalc); });
     recalc();
